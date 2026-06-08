@@ -21,3 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/signin', [AuthController::class, 'processLoginApi']); 
 Route::post('/signup', [AuthController::class, 'prosessRegisterApi']);
+
+Route::get('/pdf', function (Request $request) {
+    $lang = $request->query('lang', 'en');
+    $path = storage_path("app/pdfs/document_{$lang}.pdf");
+    return response()->file($path, ['Content-Type' => 'application/pdf']);
+});

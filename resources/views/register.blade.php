@@ -28,10 +28,7 @@
         <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
         <label for="floatingInput">Email address</label>
       </div>
-      <div class="form-floating">
-        <input type="text" name="industry" class="form-control" id="floatingInput" placeholder="Industry">
-        <label for="floatingInput">Industry</label>
-      </div>    
+      
       <div class="form-floating">
         <input type="text" name="age" class="form-control" id="floatingInput" placeholder="Age">
         <label for="floatingInput">Age</label>

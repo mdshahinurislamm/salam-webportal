@@ -24,7 +24,6 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'role' => '',
-            'industry' => 'required',
             'age' => 'required',
             'country' => 'required',
         ]);       
@@ -34,8 +33,7 @@ class AuthController extends Controller
             'last_name' => $request->input('last_name'),
             'email' => strtolower($request->input('email')),
             'password' => bcrypt($request->input('password')),
-            'role' => '0',            
-            'industry' => $request->input('industry'),            
+            'role' => '0',         
             'age' => $request->input('age'),            
             'country' => $request->input('country'),
         ];
@@ -210,9 +208,8 @@ class AuthController extends Controller
         'first_name' => $request->input('first_name'),
         'email' => strtolower($request->input('email')),
         'password' => bcrypt($request->input('password')),
-        'role' => strtolower("0"),         
-        'last_name' => 'teswt', 
-        'industry' => null,
+        'role' => '1',         
+        'last_name' => '',
         'age' => null,
         'country' => null
     ]; 
