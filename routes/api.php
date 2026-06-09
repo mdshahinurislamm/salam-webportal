@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\BannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +29,7 @@ Route::get('/pdf', function (Request $request) {
     $path = storage_path("app/pdfs/document_{$lang}.pdf");
     return response()->file($path, ['Content-Type' => 'application/pdf']);
 });
+
+
+Route::get('/posts', [PostController::class, 'allposts']);
+Route::get('/banners', [BannerController::class, 'allbanners']);

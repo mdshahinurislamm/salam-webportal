@@ -1,30 +1,69 @@
-
 @extends('layouts.master')
-<link href="{{ asset('assets/css/signin.css')}}" rel="stylesheet">
+
+@section('page-title', 'Sign In')
+
 @section('content')
-  <main class="form-signin w-100 m-auto">
-  <img class="mb-4" src="assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
-      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>    
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">☪</div>
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-sub">Sign in to your Salam account</p>
 
-    <form action="{{ url('/login') }}" method="post">
-        @csrf
-      <div class="form-floating">
-        <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-        <label for="floatingInput">Email address</label>
-      </div>
-      <div class="form-floating">
-        <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
-        <label for="floatingPassword">Password</label>
-      </div>
+        @if ($errors->any())
+            <div class="alert-pro danger">
+                <span>⚠</span>
+                <ul style="margin:0; padding-left: 16px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-      <div class="checkbox mb-3">
-        <label>
-          <input type="checkbox" value="remember-me"> Remember me
-        </label>
-      </div>
-      <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-      <div class="col-auto fs-10 text-600"><span class="mb-0 undefined">or</span> <span><a href="register">Create an account</a></span></div>
-      <div class="col-auto fs-10 text-600"><span class="mb-0 undefined">or</span> <span><a href="{{url('/forgot-password')}}">Forgot Password</a></span></div>
-    </form>
-  </main>    
-  @endsection
+        @if(session()->has('message'))
+            <div class="alert-pro {{ session('type') === 'danger' ? 'danger' : 'success' }}">
+                <span>{{ session('type') === 'danger' ? '⚠' : '✓' }}</span>
+                {{ session('message') }}
+            </div>
+        @endif
+
+        @if(session('success'))
+            <div class="alert-pro success"><span>✓</span> {{ session('success') }}</div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert-pro danger"><span>⚠</span> {{ session('error') }}</div>
+        @endif
+
+        <form action="{{ url('/login') }}" method="post">
+            @csrf
+
+            <div class="form-group">
+                <label class="form-label required">Email address</label>
+                <input type="email" name="email" class="form-control-pro" placeholder="you@example.com" value="{{ old('email') }}" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <label class="form-label" style="margin: 0;" for="password">Password</label>
+                    <a href="{{ url('/forgot-password') }}" class="auth-link" style="font-size: 12.5px;">Forgot password?</a>
+                </div>
+                <input type="password" name="password" id="password" class="form-control-pro" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label class="check-row">
+                    <input type="checkbox" name="remember" value="1">
+                    <span>Keep me signed in</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-pro btn-primary-pro" style="width: 100%; justify-content: center; padding: 11px;">
+                Sign In
+            </button>
+        </form>
+
+        <div class="auth-divider">Don't have an account? <a href="{{ url('/register') }}" class="auth-link">Create one</a></div>
+    </div>
+</div>
+@endsection

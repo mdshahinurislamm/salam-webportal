@@ -43,7 +43,7 @@ class AuthController extends Controller
             
             $input->sendEmailVerificationNotification();            
             //session()->flash('message','success');              
-            return redirect()->route('verification.notice');
+            return redirect()->route('verification.notice');           
 
         }catch(Exeption $e){
             $this->setErrorMessage($e->getMessage());
@@ -57,8 +57,8 @@ class AuthController extends Controller
        
         return view('login'); 
     }
-    public function processLogin(Request $request){
-
+    public function processLogin(Request $request){        
+    
          //validation
          $this->validate($request, [
             'email' => 'required|email',
@@ -67,9 +67,32 @@ class AuthController extends Controller
 
         $credentials = $request->except(['_token']);
 
+
        // dd(auth()->attempt($credentials));
-        if (auth()->attempt($credentials)){
-            //return redirect()->route('/dashboard');
+        if (auth()->attempt($credentials)){        
+
+            // 3. Check Email Verification Status
+            if (auth()->user()->email_verified_at === null) {
+                
+                // Capture the user instance before logging them out
+                $user = auth()->user(); 
+                
+                // Log them back out immediately
+                auth()->logout();
+                
+                // Set your error message
+                $this->setErrorMessage('Your email address is not verified.'); 
+
+                // FIX: Call the notification method on the user model object
+                $user->sendEmailVerificationNotification();            
+                
+                // Redirect to the notice page
+                return redirect()->route('verification.notice');  
+            }
+            
+            // 4. Success: Regenerate session to protect against hijacking
+            $request->session()->regenerate();
+            
             return redirect('/dashboard');
              
         }            
@@ -176,7 +199,7 @@ class AuthController extends Controller
     //for API login
     
     //login api
-    public function processLoginApi(Request $request){
+    public function processLoginApi(Request $request){    
         
         //validation
         $this->validate($request, [

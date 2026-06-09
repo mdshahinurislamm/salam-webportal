@@ -11,6 +11,7 @@ class AdminController extends Controller
     {
         $this->middleware(['auth','verified']);
     }
+    
     //admin dashboard
     public function dashboard(){
         return view('dashboard');
