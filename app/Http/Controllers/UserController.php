@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -78,4 +80,67 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
+
+    // for API user edit and update
+    /**
+     * Get Profile
+     */
+    public function profile()
+    {
+       
+        return response()->json([
+            'success' => true,
+            'data' => Auth::user()
+        ]);
+    }
+
+    /**
+     * Update Profile
+     */
+    public function updateProfile(Request $request)
+    {
+        // return response()->json(['message' => 'Username & Password incorrect']);
+        $user = Auth::user();
+
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'nullable|string|max:255',
+            'email'      => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->id)
+            ],
+            'age'        => 'nullable',
+            'country'    => 'nullable|string|max:255',
+        ]);
+
+        $user->update([
+            'first_name' => $request->first_name,
+            'last_name'  => $request->last_name,
+            'email'      => $request->email,
+            'age'        => $request->age,
+            'country'    => $request->country,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully',
+            'data'    => $user->fresh()
+        ]);
+    }
+
+    /**
+     * Delete Profile
+     */
+    public function deleteProfile()
+    {
+        $user = Auth::user();
+        $user->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Account deleted successfully'
+        ]);
+    }
+
+
 }

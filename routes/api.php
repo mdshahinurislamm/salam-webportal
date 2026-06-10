@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +36,18 @@ Route::get('/posts', [PostController::class, 'allposts']);
 Route::get('/banners', [BannerController::class, 'allbanners']);
 
 Route::post('/verifyotp', [AuthController::class, 'verifyOtp']);
+
+
+Route::post('/forgotpassword', [AuthController::class, 'forgotPassword']);
+Route::post('/verifyresetotp', [AuthController::class, 'verifyResetOtp']);
+Route::post('/resetpassword', [AuthController::class, 'resetPassword']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/profile', [UserController::class, 'profile']);
+    Route::put('/profile/update', [UserController::class, 'updateProfile']);
+    Route::delete('/profile/delete', [UserController::class, 'deleteProfile']);
+
+});
+
