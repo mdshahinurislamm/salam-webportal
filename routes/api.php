@@ -33,3 +33,5 @@ Route::get('/pdf', function (Request $request) {
 
 Route::get('/posts', [PostController::class, 'allposts']);
 Route::get('/banners', [BannerController::class, 'allbanners']);
+
+Route::post('/verifyotp', [AuthController::class, 'verifyOtp']);

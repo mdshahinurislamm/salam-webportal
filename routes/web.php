@@ -58,10 +58,29 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+// Route::get('/create-storage-link', function () {
+//     Artisan::call('storage:link');
+//     return 'Storage link created successfully';
+// });
+
+
 
 Route::get('/create-storage-link', function () {
-    Artisan::call('storage:link');
-    return 'Storage link created successfully';
+    $target = storage_path('app/public');
+    
+    $link = 'storage';
+    
+    //dd($link);
+
+    if (file_exists($link)) {
+        return 'Storage link already exists';
+    }
+
+    if (symlink($target, $link)) {
+        return 'Storage link created successfully';
+    }
+
+    return 'Failed to create storage link (permission denied)';
 });
 
 

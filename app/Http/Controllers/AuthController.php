@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use DB;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -199,18 +200,25 @@ class AuthController extends Controller
     //for API login
     
     //login api
-    public function processLoginApi(Request $request){    
-        
+    public function processLoginApi(Request $request){         
         //validation
         $this->validate($request, [
            'email' => 'required|email',
            'password' => 'required|min:6'
        ]);
+
+        $user = DB::table('users')->where('email', $request->email)->first(); 
+        if (!$user->is_verified) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please verify your email first'
+            ]);
+        }
+
        $credentials = $request->except(['_token']);
-       if (auth()->attempt($credentials)){
-            $paste = DB::table('users')->where('email', $request->email)->first(); 
-            $paste->message = 'Username & Password';
-            return response()->json($paste);
+       if (auth()->attempt($credentials)){            
+            $user->message = 'Username & Password';
+            return response()->json($user);
        } 
         
        return response()->json(['message' => 'Username & Password incorrect']);
@@ -219,39 +227,88 @@ class AuthController extends Controller
    //register api
    public function prosessRegisterApi(Request $request){  
 
-    //validation
-    $validation = $this->validate($request, [
-        'first_name' => 'required',
-        'email' => 'required|email',
-        'password' => 'required|min:6',
-        'role' => ''
-    ]);     
+        //validation
+        $validation = $this->validate($request, [
+            'first_name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'role' => ''
+        ]);     
 
-    $data = [
-        'first_name' => $request->input('first_name'),
-        'email' => strtolower($request->input('email')),
-        'password' => bcrypt($request->input('password')),
-        'role' => '1',         
-        'last_name' => '',
-        'age' => null,
-        'country' => null
-    ]; 
+        $otp = rand(100000, 999999);
+        $otp = 1234;
 
-    
-    
-    $user = User::where('email', '=', $request->input('email'))->first();
+        $data = [
+            'first_name' => $request->input('first_name'),
+            'email' => strtolower($request->input('email')),
+            'password' => bcrypt($request->input('password')),
+            'role' => '0',         
+            'last_name' => '',
+            'age' => $request->input('age'),
+            'country' => $request->input('country'),
+            'otp' => $otp,
+            'otp_expires_at' => now()->addMinutes(10),
+        ];  
+        //    return response()->json(['message' => $data['email']]);    
+        
+        $user = User::where('email', '=', $request->input('email'))->first();    
 
-    
+        if ($user === null) {
 
-    if ($user === null) {
-    // user doesn't exist
-    $result = User::create($data);
-    
+        // Send OTP by email
+        Mail::raw("Your OTP is: $otp", function ($message) use ($data) {
+            $message->to($data['email'])
+                    ->subject('Email Verification OTP');
+        });
 
-    return response()->json(['message' => 'User account created.']);
+        // user doesn't exist
+        $result = User::create($data);  
+        // return response()->json(['message' => 'User account created.']);    
+        return response()->json(array_merge($result->toArray(), [
+            'message' => 'User account created.'
+        ]));
+        
+        }
+        return response()->json(['message' => 'Email Alredy Exist']);   
+        
     }
-    return response()->json(['message' => 'Email Alredy Exist']);
-    
- }
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required'
+        ]);
+
+        $user = User::where('email', $request->email)
+                    ->where('otp', $request->otp)
+                    ->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid OTP'
+            ]);
+        }
+
+        if (now()->greaterThan($user->otp_expires_at)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'OTP expired'
+            ]);
+        }
+
+        User::where('id', $user->id)->update([
+            'is_verified' => true,
+            'email_verified_at' => now(),
+            'otp' => null,
+            'otp_expires_at' => null,
+        ]);
+        // $user->markEmailAsVerified();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Email verified successfully'
+        ]);
+    }
     
 }

@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('role');
             $table->string('age')->nullable();
             $table->string('country')->nullable();
+            $table->string('otp')->nullable();
+            $table->timestamp('otp_expires_at')->nullable();
+            $table->boolean('is_verified')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
