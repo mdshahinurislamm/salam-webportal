@@ -142,7 +142,7 @@ Content-Type: application/json
 
 ###
 GET https://larapress.org/salam/api/profile HTTP/1.1 
-Authorization: Bearer 5|FdNhpONm1qMTuKOiDjDsn06LhNCoxe4QZbgXE3ahd2e21746
+Authorization: Bearer 6|TCQAIL9CNaDMMih468EugKPh3OwrumHPVjojkkq7eb2501b3
 Content-Type: application/json
 
 ###
@@ -164,6 +164,19 @@ POST https://larapress.org/salam/api/profile/delete HTTP/1.1
 Authorization: Bearer 5|FdNhpONm1qMTuKOiDjDsn06LhNCoxe4QZbgXE3ahd2e21746
 Content-Type: application/json
 Accept: application/json
+
+###
+
+POST https://larapress.org/salam/api/profile/changepassword HTTP/1.1 
+Authorization: Bearer 6|TCQAIL9CNaDMMih468EugKPh3OwrumHPVjojkkq7eb2501b3
+Content-Type: application/json
+Accept: application/json
+
+{
+    "current_password": "shahinalam6644@gmail.com",
+    "new_password": "shahinalam6644@gmail.com1",
+    "new_password_confirmation": "shahinalam6644@gmail.com1"
+}
 
 
 
