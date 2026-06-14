@@ -34,20 +34,20 @@ Route::get('/pdf', function (Request $request) {
 
 Route::get('/posts', [PostController::class, 'allposts']);
 Route::get('/banners', [BannerController::class, 'allbanners']);
-
 Route::post('/verifyotp', [AuthController::class, 'verifyOtp']);
-
 
 Route::post('/forgotpassword', [AuthController::class, 'forgotPassword']);
 Route::post('/verifyresetotp', [AuthController::class, 'verifyResetOtp']);
 Route::post('/resetpassword', [AuthController::class, 'resetPassword']);
 
-
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile', [UserController::class, 'profile']);
-    Route::put('/profile/update', [UserController::class, 'updateProfile']);
-    Route::delete('/profile/delete', [UserController::class, 'deleteProfile']);
+    Route::post('/profile/update', [UserController::class, 'updateProfile']);
+    Route::post('/profile/delete', [UserController::class, 'deleteProfile']);
+    
+    Route::post('/profile/changepassword', [UserController::class, 'changePassword']);
 
 });
+   
 

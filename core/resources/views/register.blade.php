@@ -5,7 +5,7 @@
 @section('content')
 <div class="auth-wrap">
     <div class="auth-card" style="max-width: 480px;">
-        <div class="auth-logo">☪</div>
+        <div class="auth-logo"><img src="https://larapress.org/salam/assets/img/logo.png" width="48px"/></div>
         <h1 class="auth-title">Create your account</h1>
         <p class="auth-sub">Join Salam — fill in your details below</p>
 

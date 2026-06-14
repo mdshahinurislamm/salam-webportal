@@ -209,6 +209,21 @@ class AuthController extends Controller
 
         $user = DB::table('users')->where('email', $request->email)->first(); 
         if (!$user->is_verified) {
+            
+            $otp = rand(100000, 999999);
+            User::where('id', $user->id)->update([
+                'is_verified' => false,
+                'email_verified_at' => null,
+                'otp' => $otp,
+                'otp_expires_at' => now()->addMinutes(5)
+            ]);
+            
+            // Send OTP by email
+            Mail::raw("Your OTP is: $otp", function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Email Verification OTP');
+            });
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Please verify your email first'
@@ -216,15 +231,13 @@ class AuthController extends Controller
         }
 
        $credentials = $request->except(['_token']);
-       if (auth()->attempt($credentials)){  
-            
+       if (auth()->attempt($credentials)){            
             // Generate the Sanctum plain-text token
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;          
             $user->access_token = $token;
             $user->token_type = 'Bearer';
             $user->message = 'Login successful';
-
             return response()->json($user);
        } 
         
@@ -240,42 +253,42 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:6',
             'role' => ''
-        ]);     
+        ]); 
 
         $otp = rand(100000, 999999);
-        $otp = 1234;
+       // $otp = 1234;
 
         $data = [
             'first_name' => $request->input('first_name'),
             'email' => strtolower($request->input('email')),
             'password' => bcrypt($request->input('password')),
             'role' => '0',         
-            'last_name' => '',
+            'last_name' => '-',
             'age' => $request->input('age'),
             'country' => $request->input('country'),
             'otp' => $otp,
-            'otp_expires_at' => now()->addMinutes(10),
+            'otp_expires_at' => now()->addMinutes(5),
         ];  
-        //    return response()->json(['message' => $data['email']]);    
         
         $user = User::where('email', '=', $request->input('email'))->first();    
 
         if ($user === null) {
 
-        // Send OTP by email
-        Mail::raw("Your OTP is: $otp", function ($message) use ($data) {
-            $message->to($data['email'])
-                    ->subject('Email Verification OTP');
-        });
-
-        // user doesn't exist
-        $result = User::create($data);  
-        // return response()->json(['message' => 'User account created.']);    
-        return response()->json(array_merge($result->toArray(), [
-            'message' => 'User account created.'
-        ]));
+            // Send OTP by email
+            Mail::raw("Your OTP is: $otp", function ($message) use ($data) {
+                $message->to($data['email'])
+                        ->subject('Email Verification OTP');
+            });
+    
+            // user doesn't exist
+            $result = User::create($data);  
+              
+            return response()->json(array_merge($result->toArray(), [
+                'message' => 'User account created.'
+            ]));
         
         }
+        
         return response()->json(['message' => 'Email Alredy Exist']);   
         
     }
@@ -317,7 +330,7 @@ class AuthController extends Controller
             'message' => 'Email verified successfully'
         ]);
     }
-
+    
     // forget pass 
     public function forgotPassword(Request $request)
     {

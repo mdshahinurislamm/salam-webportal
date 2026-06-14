@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('languages');
-            $table->string('user_id')->nullable();
-            // $table->foreignId('user_id')->constrained()->onDelete('cascade'); // If posts belong to users
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // If posts belong to users
             $table->string('image')->nullable();
             $table->string('type')->nullable();
             $table->boolean('is_published')->default(false);

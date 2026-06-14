@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 
 class UserController extends Controller
@@ -13,7 +14,7 @@ class UserController extends Controller
     //--login system
     public function __construct()
     {
-        $this->middleware(['auth','verified']);
+       $this->middleware(['auth','verified']);
     }
 
     /**
@@ -80,7 +81,7 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
-
+    
     // for API user edit and update
     /**
      * Get Profile
@@ -99,7 +100,6 @@ class UserController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        // return response()->json(['message' => 'Username & Password incorrect']);
         $user = Auth::user();
 
         $request->validate([
@@ -141,6 +141,30 @@ class UserController extends Controller
             'message' => 'Account deleted successfully'
         ]);
     }
-
-
+    
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+    
+        $user = Auth::user();
+    
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect'
+            ], 422);
+        }
+    
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully'
+        ]);
+    }
 }

@@ -83,6 +83,11 @@ Route::get('/create-storage-link', function () {
     return 'Failed to create storage link (permission denied)';
 });
 
+Route::get('/clear', function() {
+    Illuminate\Support\Facades\Artisan::call('route:clear');
+    return "Route cache cleared successfully!";
+});
+
 
 
 // Route::resource('posts', PostController::class);

@@ -14,7 +14,7 @@
             --brand-hover: #1d3a9e;
             --surface:     #ffffff;
             --bg:          #f1f5f9;
-            --sidebar-bg:  #0f172a;
+            --sidebar-bg:  #4f5031;
             --sidebar-w:   240px;
             --text:        #1e293b;
             --muted:       #64748b;
@@ -55,8 +55,8 @@
             text-decoration: none;
         }
         .sidebar-brand-icon {
-            width: 34px; height: 34px;
-            background: var(--brand);
+            width: 100px; height: 100px;
+            /*background: var(--brand);*/
             border-radius: 8px;
             display: grid; place-items: center;
             font-size: 16px; flex-shrink: 0;
@@ -262,7 +262,7 @@
         .auth-wrap {
             min-height: 100vh;
             display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            /*background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);*/
             padding: 24px;
         }
         .auth-card {
@@ -274,11 +274,11 @@
         }
         .auth-logo {
             width: 48px; height: 48px;
-            background: var(--brand);
+            /*background: var(--brand);*/
             border-radius: 12px;
             display: grid; place-items: center;
             font-size: 22px;
-            margin: 0 auto 22px;
+            margin: 0 auto 22px; 
         }
         .auth-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
         .auth-sub   { font-size: 13.5px; color: var(--muted); text-align: center; margin-bottom: 28px; }
@@ -365,8 +365,8 @@
 @auth
 <div class="sidebar" id="sidebar">
     <a href="{{ url('/') }}" class="sidebar-brand">
-        <div class="sidebar-brand-icon">☪</div>
-        Salam
+        <div class="sidebar-brand-icon"><img src="https://larapress.org/salam/assets/img/logo.png" width="100px"/></div>
+        <!--Salam-->
     </a>
 
     <div style="padding: 8px 12px; flex: 1;">
